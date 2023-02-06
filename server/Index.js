@@ -1,6 +1,10 @@
 import express from "express"
 import mysql from "mysql"
 import cors from "cors"
+import * as dotenv from 'dotenv' // see https://github.com/motdotla/dotenv#how-do-i-use-dotenv-with-import
+dotenv.config()
+
+// import mongoose from "mongoose"
 const app = express();
 const db = mysql.createConnection({
     host:"localhost",
@@ -8,6 +12,8 @@ const db = mysql.createConnection({
     password:"password",
     database:"furnituresweb"
 })
+
+
 // ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'password';
 app.use(express.json());
 app.use(cors())

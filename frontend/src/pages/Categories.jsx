@@ -2,40 +2,91 @@ import React from 'react'
 import { useEffect } from 'react';
 import { useState } from 'react';
 import axios from "axios";
-import {Link} from "react-router-dom"
+import { Link } from "react-router-dom"
 import Nav from './Nav';
+import styled from 'styled-components'
+import { buttonBaseClasses } from '@mui/material';
+import { green } from '@mui/material/colors';
+
+const Imgg = styled.div`
+    flex: 2;
+    position: relative;
+    &::after{
+        content: "";
+        position: absolute;
+        width: 250px;
+        height: 250px;
+        background-color: #d1b091;
+        top: 20px;
+        left: 160px;
+        z-index: -1;
+    }
+`
+
+const Img = styled.img`
+    width: 250px;
+    height: 250px;
+    object-fit: cover;
+`
+const Wrapper = styled.div`
+    display: flex;
+    text-align: center;
+    margin: 20px 50px;
+
+    &:nth-child(2n+1){
+        flex-direction: row-reverse;
+    }
+`
+const Categoriess = styled.div`
+    margin-top: 50px;
+    display: flex;
+    flex-direction: column;
+    gap: 150px;
+`
+const Content = styled.div`
+    flex: 3;
+`
+
 const Categories = () => {
 
-    const [catagories,setCat] = useState([]);
-    useEffect(()=>{
-        const fetchAllCat = async ()=>{
-            try{
+    const [catagories, setCat] = useState([]);
+    useEffect(() => {
+        const fetchAllCat = async () => {
+            try {
                 const res = await axios.get("http://localhost:5000/categories");
                 setCat(res.data);
-            }catch(err){
+            } catch (err) {
                 console.log(err);
             }
         }
         fetchAllCat();
-    },[])
+    }, [])
 
 
-  return (
-    <div>
-        <Nav/>
-        <h1>All Categories Available</h1>
-        <div className='categories'>
-            {catagories.map(category=>(
-                <div className="category" key = {category.CategoryId}>
-                    {category.img && <img src="" alt="" />}
-                    <h1>{category.CategoryId}</h1>
-                    <h2>{category.CategoryName}</h2>
-                    <Link to = {`../products/${category.CategoryId}`}>lets Go</Link>
-                </div>
-            ))}
+
+    return (
+        <div>
+            <Nav />
+            <Categoriess>
+                {catagories.map(category => (
+                    <Wrapper key={category.CategoryId}>
+                        <Imgg>
+                            <Link to={`../products/${category.CategoryId}`}>
+                                <Img src={category.Imgurll} alt="" />
+                            </Link>
+                        </Imgg>
+                        <Content>
+                            <Link style={{ textDecoration: 'none'  }} to={`../products/${category.CategoryId}`}>
+                                <h2 style={{ textDecoration: 'none', color: '#220606' }}>{category.CategoryName}</h2>
+                                <p style={{ textDecoration: 'none' , color: '#220606'}}>{category.catdesc}</p>
+                            </Link>
+                        </Content>
+
+                    </Wrapper>
+                ))}
+            </Categoriess>
         </div>
-    </div>
-  )
+    )
 }
 
 export default Categories;
