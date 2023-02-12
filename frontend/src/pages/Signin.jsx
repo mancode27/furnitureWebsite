@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import { Link } from 'react-router-dom'
 import styled from "styled-components"
 
 const Form = styled.form`
@@ -30,10 +31,59 @@ const Inner = styled.div`
     font-weight: bolder;
     font-size:20px;
 `
+
+
+
+
 export default class Signin extends Component {
+  
+  handleSubmit(e) {
+    e.preventDefault();
+    const {email, password} = this.state;
+    console.log(email, password);
+    fetch("http://localhost:3001/login", {
+            method : "POST",
+            crossDomain : true,
+            headers : {
+                "Content-Type" : "application/json",
+                Accept: "application/json", 
+                "Access-Control-Allow-Origin" : "*",           
+            },
+            body : JSON.stringify({
+                email,  
+                password,
+            }),
+        })
+        .then((res) => res.json())
+        .then((data) => {
+            console.log(data, "userRegister");
+            if(data.status == "ok") {
+              alert("login successful");
+              if(data.userid == "63e3adfdd2d5589da11012f1"){
+                window.location.href = `/${data.userid}/admin`
+              }else{
+                window.location.href = `/${data.userid}/categories`
+              }
+            }else if (data.status == "error"){
+              alert("Invalid password try again!");
+            }
+        })
+  }
+  
+  constructor(props){
+    super(props)
+    this.state = {
+      email: "", 
+      password : ""
+    };
+    this.handleSubmit = this.handleSubmit.bind(this);
+  }
+  
+  
+  
   render() {
     return (
-      <Form>
+      <Form onSubmit={this.handleSubmit}>
         <h3 style={{position:'relative',backgroundColor:"black",color:"white", padding:"10px 10px"}}>Sign In</h3>
 
         <Inner className="mb-3">
@@ -42,6 +92,7 @@ export default class Signin extends Component {
             type="email"
             className="form-control"
             placeholder="Enter email"
+            onChange={(e) => this.setState({email : e.target.value})}
             style={{border:"1.5px solid black"}}
           />
         </Inner>
@@ -52,6 +103,7 @@ export default class Signin extends Component {
             type="password"
             className="form-control"
             placeholder="Enter password"
+            onChange={(e) => this.setState({password: e.target.value})}
             style={{border:"1.5px solid black"}}
           />
         </Inner>
@@ -71,9 +123,9 @@ export default class Signin extends Component {
         </Inner>
 
         <Inner className="d-grid">
-          <button type="submit" className="btn btn-primary">
-            <a style={{position:"relative" , textDecoration:"none", color:"black"}} href="/categories">Submit</a>
-          </button>
+          <button style={{position:"relative" , textDecoration:"none", color:"black"}}  type="submit" className="btn btn-primary">
+           Submit
+           </button>
         </Inner>
         <p style={{position:"relative",fontWeight:"bold", color:"black"}} className="forgot-password text-right">
           Forgot <a style={{position:"relative" , textDecoration:"none"}} href="#">password?</a>

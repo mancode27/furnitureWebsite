@@ -1,22 +1,8 @@
-// import * as dotenv from 'dotenv' // see https://github.com/motdotla/dotenv#how-do-i-use-dotenv-with-import
-// dotenv.config()
 
-// import mongoose from "mongoose"
 
-// const connectionParams = {
-//     userNewUrlParser: true,
-//     useUnifiedTopology: true
-// }
-// mongoose.set('strictQuery', true);
-// const dbUrl = "mongodb+srv://Kunal:MRjgUpPjqz9V6dv@atlascluster.kt3w7ne.mongodb.net/test"
-// mongoose
-//     .connect(dbUrl,connectionParams)
-//     .then(()=>{
-//         console.info("Connected to the DB")
-//     }).catch((e)=>{
-//         console.log("Error:",e);
-//     })
+const jwt = require("jsonwebtoken");
 
+const JWT_SECRET = "gnergrigheirg748327bhrbebfr()foeihb!"
 
 const express = require("express");
 const app = express();
@@ -58,6 +44,24 @@ app.post("/register", async(req, res) => {
   } catch (error) {
     res.send({status : "error"});
   }
+});
+
+app.post("/login", async (req, res) => {
+  const {email, password} = req.body;
+  const user = await User.findOne({email});
+  if(!user) {
+    return res.json({error : "User not found"});
+  }
+  if(await bcrypt.compare(password, user.password)){
+    const token = jwt.sign({}, JWT_SECRET);
+
+    if(res.status(201)) {
+      return res.json({userid:user._id,status : "ok", data : token});
+    }else{ 
+      return res.json({error : "error"});
+    }
+  }
+  res.json({status : "error", error : "Invalid Password"});
 });
 
 app.get("/register",async(req,res)=>{

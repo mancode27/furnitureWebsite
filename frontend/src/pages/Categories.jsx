@@ -2,7 +2,7 @@ import React from 'react'
 import { useEffect } from 'react';
 import { useState } from 'react';
 import axios from "axios";
-import { Link } from "react-router-dom"
+import { Link, useParams } from "react-router-dom"
 import Nav from './Nav';
 import styled from 'styled-components'
 import { buttonBaseClasses } from '@mui/material';
@@ -48,7 +48,8 @@ const Content = styled.div`
 `
 
 const Categories = () => {
-
+    const {custid} = useParams();
+    console.log(useParams());
     const [catagories, setCat] = useState([]);
     useEffect(() => {
         const fetchAllCat = async () => {
@@ -66,25 +67,26 @@ const Categories = () => {
 
     return (
         <div>
-            <Nav />
+            <Nav id = {custid}  />
             <Categoriess>
                 {catagories.map(category => (
                     <Wrapper key={category.CategoryId}>
                         <Imgg>
-                            <Link to={`../products/${category.CategoryId}`}>
+                            <Link to={`../${custid}/products/${category.CategoryId}`}>
                                 <Img src={category.Imgurll} alt="" />
                             </Link>
                         </Imgg>
                         <Content>
-                            <Link style={{ textDecoration: 'none'  }} to={`../products/${category.CategoryId}`}>
+                            <Link style={{ textDecoration: 'none' }} to={`../${custid}/products/${category.CategoryId}`}>
                                 <h2 style={{ textDecoration: 'none', color: '#220606' }}>{category.CategoryName}</h2>
-                                <p style={{ textDecoration: 'none' , color: '#220606'}}>{category.catdesc}</p>
+                                <p style={{ textDecoration: 'none', color: '#220606' }}>{category.catdesc}</p>
                             </Link>
                         </Content>
 
                     </Wrapper>
                 ))}
             </Categoriess>
+            
         </div>
     )
 }

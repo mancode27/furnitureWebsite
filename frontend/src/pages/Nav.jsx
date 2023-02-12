@@ -43,7 +43,13 @@ const Input = styled.input`
   width: 400px;
   height: 25px;
 `
-const Nav = () => {
+
+
+const Nav = (props) => {
+  const id = props.id;
+  const handleevent=()=>{
+    window.location.href = `../../${id}/Cart` ;
+  }
   return (
     <Container>
       <Wrapper>
@@ -54,7 +60,8 @@ const Nav = () => {
         </Middle>
         <Right>
           <Cover>
-            <ShoppingCartIcon />
+            <button onClick={handleevent}><ShoppingCartIcon /></button>
+            
           </Cover>
           <Cover>
             <FavoriteBorderSharpIcon />

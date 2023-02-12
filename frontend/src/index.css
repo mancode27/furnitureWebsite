@@ -82,3 +82,9 @@ html,
 .forgot-password a {
   color: #167bff;
 }
+
+
+.slide-container{
+  width: 40vw;
+  border: 2px solid black;
+}

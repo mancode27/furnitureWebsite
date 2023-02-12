@@ -2,6 +2,7 @@ import express from "express"
 import mysql from "mysql"
 import cors from "cors"
 import * as dotenv from 'dotenv' // see https://github.com/motdotla/dotenv#how-do-i-use-dotenv-with-import
+import { status } from "init"
 dotenv.config()
 
 // import mongoose from "mongoose"
@@ -62,6 +63,64 @@ app.get("/product/:ProductId", (req,res)=>{
     })
 })
 
+app.get("/productCat/:ProductId", (req,res)=>{
+    const productId = req.params.ProductId;
+    const q = "Select * from product where Category_Id in (select Category_Id from product p where p.ProductId = ?) and ProductId != ?"
+    db.query(q,[productId,productId],(err,data)=>{
+        if(err) return res.json(err);
+        return res.json(data);
+    })
+})
+
+app.get("/images/:ProductId",(req,res)=>{
+    const productId = req.params.ProductId;
+    const q = "select * from images where ProductId = ?"
+    db.query(q,[productId],(err,data)=>{
+        if(err) return res.json(err);
+        return res.json(data);
+    })
+})
+
+app.post("/AddCart",(req,res)=>{
+    const data = [
+        req.body.userid,
+        req.body.ProductId,
+        req.body.quantity
+    ]
+    const q = "insert into cart values(?)"
+    db.query(q,[data],(err,data)=>{
+        if(err) return res.json(err);
+        return res.json({"status":"200"});
+    })
+})
+app.get("/Cart/:userid",(req,res)=>{
+    const userid = req.params.userid;
+    const q = "Select * from product p , cart c where c.ProductId = p.ProductId and c.CustomerId = ?"
+    db.query(q,[userid],(err,data)=>{
+        if(err) return res.json(err);
+        return res.json(data);
+    })
+})
+app.get("/Cart/:userid/1",(req,res)=>{
+    const userid = req.params.userid;
+    const q = "Select SUM(Cost*Quantity) as totcost from product p , cart c where c.ProductId = p.ProductId and c.CustomerId = ?"
+    db.query(q,[userid],(err,data)=>{
+        if(err) return res.json(err);
+        return res.json(data);
+    })
+})
+
+app.put("/Cart/:userid",(req,res)=>{
+    const userid  = req.params.userid;
+    const ProductId = req.body.ProdId;
+    const quantity = req.body.quan ;
+    const q = "update cart set Quantity = ? where CustomerId = ? and ProductId = ?"
+    db.query(q,[quantity,userid,ProductId],(err,data)=>{
+        if(err) return res.json(err);
+        return res.json(data);
+    })
+
+})
 
 app.listen(5000,()=>{
     console.log("Connected to backend");
